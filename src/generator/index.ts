@@ -7,7 +7,7 @@ export function doGenerateSQL(json: InputJSON) {
   if (!json?.main) {
     return null;
   }
-  const sql = json.main.sql ?? json.main;
+  const sql = getSql(json.main);
   if (!sql) {
     return null;
   }
@@ -23,11 +23,22 @@ export function doGenerateSQL(json: InputJSON) {
     context,
     context.main?.params,
     rootInvokeTreeNode
-  );
+  ) + ";";
   return {
     resultSQL,
     invokeTree: rootInvokeTreeNode.children[0], // 取第一个作为根节点
   };
+}
+/**
+ * 生成 SQL 入口函数
+ * @param node 节点
+ */
+function getSql(node: any) {
+  const sql = node.sql ?? node
+  if (sql instanceof Array) {
+    return sql.join(";\n");
+  }
+  return sql;
 }
 
 /**
@@ -51,7 +62,7 @@ function generateSQL(
   if (invokeTreeNode) {
     childInvokeTreeNode = {
       title: key,
-      sql: currentNode.sql ?? currentNode,
+      sql: getSql(currentNode),
       params,
       children: [],
     };
@@ -86,7 +97,7 @@ function replaceParams(
   if (currentNode == null) {
     return "";
   }
-  const sql = currentNode.sql ?? currentNode;
+  const sql = getSql(currentNode);
   if (!sql) {
     return "";
   }

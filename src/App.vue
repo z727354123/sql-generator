@@ -49,7 +49,8 @@ const getSQL = () => {
   if (!generateResult) {
     return;
   }
-  let result = format(generateResult.resultSQL);
+  // let result = format(generateResult.resultSQL);
+  let result = generateResult.resultSQL;
   // 针对执行引擎，处理自动格式化的问题
   result = result.replaceAll("{ {", "{{");
   result = result.replaceAll("} }", "}}");
